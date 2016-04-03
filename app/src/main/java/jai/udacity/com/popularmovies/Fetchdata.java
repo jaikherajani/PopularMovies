@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Fetchdata extends AsyncTask<String, Void, String> {
-    String apiKey ="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    String apiKey ="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
     private final String LOG_TAG = Fetchdata.class.getSimpleName();
 

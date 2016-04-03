@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TITLE = "title";
     private final String RELEASE_DATE = "release_date";
     private final String MOVIE_POSTER = "poster_path";
+    private final String MOVIE_POSTER2 = "backdrop_path";
     private final String VOTE_AVERAGE = "vote_average";
     private final String PLOT_SYNOPSIS = "overview";
     private GridView gridView;
@@ -130,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                             String release_date = object.getString(RELEASE_DATE);
                             String vote = object.getString(VOTE_AVERAGE);
                             String plot = object.getString(PLOT_SYNOPSIS);
+                            String poster2 = object.getString(MOVIE_POSTER2);
 
                             Intent intent = new Intent(getApplicationContext(), MovieDetail.class);
                             intent.putExtra(TITLE, title);
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra(RELEASE_DATE, release_date);
                             intent.putExtra(VOTE_AVERAGE, vote);
                             intent.putExtra(PLOT_SYNOPSIS, plot);
+                            intent.putExtra(MOVIE_POSTER2,poster2);
                             startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();

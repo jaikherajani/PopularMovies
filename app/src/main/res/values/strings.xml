@@ -2,4 +2,5 @@
     <string name="app_name">Popular Movies</string>
     <string name="action_popularity">Sort by Popularity</string>
     <string name="action_ratings">Sort by Ratings</string>
+    <string name="action_favorite">Favorite</string>
 </resources>

@@ -1,27 +1,4 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="jai.udacity.com.popularmovies.MainActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-    </android.support.design.widget.AppBarLayout>
-
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:name="jai.udacity.com.popularmovies.MainActivityFragment"
@@ -55,19 +32,19 @@
             android:gravity="bottom"
             android:layout_alignLeft="@id/big_poster"
             />
-        <TextView
-            android:layout_width="150dp"
-            android:layout_height="52dp"
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/vote_average"
+            android:max="10"
+            style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
+            android:textColor="#000"
             android:textSize="20dp"
-            android:textColor="#fff"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_toRightOf="@id/small_poster"
             android:layout_below="@id/big_poster"
-            android:background="#F44336"
-            android:gravity="center_horizontal|center_vertical" />
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,16 +58,14 @@
             android:layout_below="@id/small_poster"
             android:layout_marginBottom="10dp"/>
         <TextView
-            android:layout_width="150dp"
-            android:layout_height="52dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/release_date"
-            android:layout_marginTop="10dp"
+            android:textColor="#000"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
             android:textSize="20dp"
-            android:background="#F44336"
-            android:textColor="#fff"
-            android:gravity="center_horizontal|center_vertical"
             android:layout_below="@id/vote_average"
             android:layout_toRightOf="@id/small_poster"/>
         <TextView
@@ -106,4 +81,3 @@
     </RelativeLayout>
     </ScrollView>
     </RelativeLayout>
-</android.support.design.widget.CoordinatorLayout>
