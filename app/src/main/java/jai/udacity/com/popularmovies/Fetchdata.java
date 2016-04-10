@@ -11,9 +11,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Fetchdata extends AsyncTask<String, Void, String> {
-    String apiKey ="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-
+    public static String apiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     private final String LOG_TAG = Fetchdata.class.getSimpleName();
+    URL url;
+    String movie_id=MovieDetail.id;
 
     @Override
     protected String doInBackground(String... params) {
@@ -24,13 +25,18 @@ public class Fetchdata extends AsyncTask<String, Void, String> {
 
         // Will contain the raw JSON response as a string.
         String MovieDBjson = null;
-        String sort_by = params[0];
+        String parameter = params[0];
 
         try {
             // Construct the URL for the theMoviedb query
             // Possible parameters are avaiable at TMDB's API page, at
             // http://api.themoviedb.org/3/discover/movie?api_key=[API KEY]
-            URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+sort_by+"&api_key="+apiKey);
+            if(parameter == "videos")
+                url = new URL("http://api.themoviedb.org/3/movie/"+movie_id+"/videos?&api_key=" + apiKey);
+            else if (parameter=="reviews")
+                url = new URL("http://api.themoviedb.org/3/movie/"+movie_id+"/reviews?&api_key=" + apiKey);
+            else
+            url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=" + parameter + "&api_key=" + apiKey);
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
