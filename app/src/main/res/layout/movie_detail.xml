@@ -1,109 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="jai.udacity.com.popularmovies.MainActivity">
+    tools:context=".MovieDetail">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="439dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppBarOverlay">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="439dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:id="@+id/big_poster" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/my_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/PopupOverlay" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-<RelativeLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:name="jai.udacity.com.popularmovies.MainActivityFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="jai.udacity.com.popularmovies.MainActivity">
+    <include layout="@layout/content_movie_detail" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/moviedetail">
+    <android.support.design.widget.FloatingActionButton
+    android:id="@+id/fab"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/fab_margin"
+    android:clickable="true"
+    android:src="@drawable/ic_favorite_border"
+    app:layout_anchor="@id/app_bar"
+    app:layout_anchorGravity="bottom|end" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="439dp"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:id="@+id/big_poster" />
-        <ImageView
-            android:layout_width="185dp"
-            android:layout_height="278dp"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:id="@+id/small_poster"
-            android:layout_marginTop="285dp"
-            android:layout_marginLeft="10dp"
-            android:gravity="bottom"
-            android:layout_alignLeft="@id/big_poster"
-            />
-        <TextView
-            android:layout_width="150dp"
-            android:layout_height="52dp"
-            android:id="@+id/vote_average"
-            android:textSize="20dp"
-            android:textColor="#fff"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toRightOf="@id/small_poster"
-            android:layout_below="@id/big_poster"
-            android:background="#F44336"
-            android:gravity="center_horizontal|center_vertical" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/name"
-            android:textSize="30dp"
-            android:textColor="#000"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:gravity="bottom"
-            android:layout_below="@id/small_poster"
-            android:layout_marginBottom="10dp"/>
-        <TextView
-            android:layout_width="150dp"
-            android:layout_height="52dp"
-            android:id="@+id/release_date"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textSize="20dp"
-            android:background="#F44336"
-            android:textColor="#fff"
-            android:gravity="center_horizontal|center_vertical"
-            android:layout_below="@id/vote_average"
-            android:layout_toRightOf="@id/small_poster"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/synopsis"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:textColor="#000"
-            android:textSize="20dp"
-            android:layout_below="@id/name"/>
-    </RelativeLayout>
-    </ScrollView>
-    </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_share"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|start" />
+
 </android.support.design.widget.CoordinatorLayout>

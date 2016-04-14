@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import static android.widget.Toast.LENGTH_SHORT;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private final String MOVIE_POSTER2 = "backdrop_path";
     private final String VOTE_AVERAGE = "vote_average";
     private final String PLOT_SYNOPSIS = "overview";
+    private final String MOVIE_ID = "id";
     private GridView gridView;
     private String resultJSON = null;
     private String[] imgUrl = new String[20];
@@ -50,18 +52,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        decide();
+        sort();
         myview=(View)findViewById(R.id.fragment);
         Context context = getApplicationContext();
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Share functionality will be added in Stage 2", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Refreshing Data. Please Wait !", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                sort();
             }
         });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sort();
     }
 
     @Override
@@ -80,13 +87,13 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_popularity) {
             status = "popularity.desc";
-            sort(status);
+            sort();
             Snackbar.make(myview, "Sorted according to Popularity", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
         else if(id == R.id.action_ratings) {
             status="vote_count.desc";
-            sort(status);
+            sort();
             Snackbar.make(myview, "Sorted according to Ratings", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
@@ -101,22 +108,16 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void decide()
+    private boolean isDatabaseAvailable(Context context, String dbName)
     {
-        boolean abc=isNetworkAvailable();
-        if(abc)
-        {
-            sort(status);
-        }
-        else
-        {
-            Snackbar.make(findViewById(R.id.fragment), "No Internet Connectivity !",Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
-        }
+        File dbFile = context.getDatabasePath(dbName);
+        return dbFile.exists();
     }
 
-    public void sort(String status)
+    public void sort()
     {
+        if(isNetworkAvailable() || isDatabaseAvailable(getApplicationContext(),SQLHelper.DATABASE_NAME))
+        {
             if (FetchMovie()) {
                 gridView = (GridView) findViewById(R.id.gridview);
                 gridView.setAdapter(new ImageAdapter(this, imgUrl));
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             String vote = object.getString(VOTE_AVERAGE);
                             String plot = object.getString(PLOT_SYNOPSIS);
                             String poster2 = object.getString(MOVIE_POSTER2);
+                            String movie_id = object.getString(MOVIE_ID);
 
                             Intent intent = new Intent(getApplicationContext(), MovieDetail.class);
                             intent.putExtra(TITLE, title);
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra(VOTE_AVERAGE, vote);
                             intent.putExtra(PLOT_SYNOPSIS, plot);
                             intent.putExtra(MOVIE_POSTER2,poster2);
+                            intent.putExtra(MOVIE_ID,movie_id);
                             startActivity(intent);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -153,6 +156,12 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(myview, "Some Error Happened !", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
+        }
+        else
+        {
+            Snackbar.make(findViewById(R.id.fragment), "No Internet Connectivity !",Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
+        }
     }
 
     private boolean FetchMovie() {
