@@ -1,6 +1,8 @@
 package jai.udacity.com.popularmovies;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -53,18 +55,11 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView poster=null;
-        TextView moviename = new TextView(mContext);
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        int height =mContext.getResources().getDisplayMetrics().heightPixels;
-        int width =mContext.getResources().getDisplayMetrics().widthPixels;
-        height=height/2;
-        width=width/2;
-
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.fragment_main, null);
             convertView.setTag(R.id.grid_image, convertView.findViewById(R.id.grid_image));
         }
-            convertView.setLayoutParams(new GridView.LayoutParams(width,height));
             poster = (ImageView) convertView.getTag(R.id.grid_image);
             Picasso.with(mContext)
                     .load(image[position])

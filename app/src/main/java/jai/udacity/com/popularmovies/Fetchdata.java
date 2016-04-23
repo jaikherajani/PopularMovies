@@ -11,11 +11,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Fetchdata extends AsyncTask<String, Void, String> {
-    public static String apiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+    public static String apiKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     private final String LOG_TAG = Fetchdata.class.getSimpleName();
     URL url;
-    String movie_id=MovieDetail.id;
-
+    public String movie_id=MovieDetailFragment.id;
     @Override
     protected String doInBackground(String... params) {
         // These two need to be declared outside the try/catch

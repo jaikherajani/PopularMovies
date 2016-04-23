@@ -38,8 +38,8 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_movie_detail" />
+    <include layout="@layout/content_movie_detail"
+        android:id="@+id/containerDetails"/>
 
     <android.support.design.widget.FloatingActionButton
     android:id="@+id/fab"
