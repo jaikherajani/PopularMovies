@@ -3,6 +3,7 @@ package jai.udacity.com.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,11 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private GridView gridView;
     private String resultJSON = null;
     private String[] imgUrl = new String[20];
+    private String[] imgUrl1;
     String status="popularity.desc";
+    int a = 0;
     public static boolean tablet=false;
-    //private AlertDialog choice;
-    //private String FLAG_CURRENT = MOST_POPULAR;
+    private DBHelper databaseHelper;
     private JSONArray movieDetails;
+    private JSONArray favmovies;
+    private JSONObject movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        databaseHelper = new DBHelper(this);
         sort();
         Context context = getApplicationContext();
         if(findViewById(R.id.containerDetails)!=null)
@@ -85,16 +91,45 @@ public class MainActivity extends AppCompatActivity {
             sort();
             Snackbar.make(findViewById(R.id.fragment), "Sorted according to Popularity", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
-        }
-        else if(id == R.id.action_ratings) {
-            status="vote_count.desc";
+        } else if (id == R.id.action_ratings) {
+            status = "vote_count.desc";
             sort();
             Snackbar.make(findViewById(R.id.fragment), "Sorted according to Ratings", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
+        } else if (id == R.id.favorite) {
+            Cursor cursor = databaseHelper.getData();
+            String[] b = new String[20];
+            a=0;
+            imgUrl1 = new String[cursor.getCount()];
+            favmovies = new JSONArray();
+            if (cursor.moveToFirst()) {
+                do {
+                    b[a] = cursor.getString(0).toString();
+                    Log.i("Fav moviesid", b[a]);
+                    Fetchdata task4 = new Fetchdata();
+                    try {
+                        resultJSON = task4.execute(b[a]).get();
+                        movie = new JSONObject(resultJSON);
+                        imgUrl1[a]= "http://image.tmdb.org/t/p/w185/" +movie.getString("poster_path");
+                       favmovies.put(movie);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("Poster urls",imgUrl1[a]);
+                    Log.i("data inside json array",favmovies.toString());
+                    a++;
+                } while (cursor.moveToNext());
+            }
+            Snackbar.make(findViewById(R.id.fragment), "Showing Favorites", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            display(imgUrl1,favmovies);
         }
-
-        return super.onOptionsItemSelected(item);
-    }
+            return super.onOptionsItemSelected(item);
+        }
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
@@ -103,59 +138,67 @@ public class MainActivity extends AppCompatActivity {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    public void display(String url[], final JSONArray object)
+    {
+        gridView = (GridView) findViewById(R.id.gridview);
+        gridView.removeAllViewsInLayout();
+        gridView.setAdapter(new ImageAdapter(this, url));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+
+                    JSONObject object1=object.getJSONObject(position);
+
+                    String title = object1.getString(TITLE);
+                    String poster = object1.getString(MOVIE_POSTER);
+                    String release_date = object1.getString(RELEASE_DATE);
+                    String vote = object1.getString(VOTE_AVERAGE);
+                    String plot = object1.getString(PLOT_SYNOPSIS);
+                    String poster2 = object1.getString(MOVIE_POSTER2);
+                    String movie_id = object1.getString(MOVIE_ID);
+                    if(tablet) {
+                        Bundle args = new Bundle();
+                        args.putString("Title", title);
+                        args.putString("Poster", poster);
+                        args.putString("Poster2", poster2);
+                        args.putString("release_date", release_date);
+                        args.putString("vote", vote);
+                        args.putString("plot", plot);
+                        args.putString("movie_id", movie_id);
+                        MovieDetailFragment detailFragment = new MovieDetailFragment();
+                        detailFragment.setArguments(args);
+                        getSupportFragmentManager().beginTransaction().replace(R.id.containerDetails, detailFragment).commit();
+                    }
+                    else {
+                        Intent intent = new Intent(getApplicationContext(), MovieDetail.class);
+                        intent.putExtra(TITLE, title);
+                        intent.putExtra(MOVIE_POSTER, poster);
+                        intent.putExtra(RELEASE_DATE, release_date);
+                        intent.putExtra(VOTE_AVERAGE, vote);
+                        intent.putExtra(PLOT_SYNOPSIS, plot);
+                        intent.putExtra(MOVIE_POSTER2,poster2);
+                        intent.putExtra(MOVIE_ID,movie_id);
+                        startActivity(intent);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Snackbar.make(view, "Error Code : " + e, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
+            }
+        });
+    }
+
 
     public void sort()
     {
         if(isNetworkAvailable())
         {
             if (FetchMovie()) {
-                gridView = (GridView) findViewById(R.id.gridview);
-                gridView.setAdapter(new ImageAdapter(this, imgUrl));
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        try {
-                            JSONObject object = movieDetails.getJSONObject(position);
-                            String title = object.getString(TITLE);
-                            String poster = object.getString(MOVIE_POSTER);
-                            String release_date = object.getString(RELEASE_DATE);
-                            String vote = object.getString(VOTE_AVERAGE);
-                            String plot = object.getString(PLOT_SYNOPSIS);
-                            String poster2 = object.getString(MOVIE_POSTER2);
-                            String movie_id = object.getString(MOVIE_ID);
-                            if(tablet) {
-                                Bundle args = new Bundle();
-                                args.putString("Title", title);
-                                args.putString("Poster", poster);
-                                args.putString("Poster2", poster2);
-                                args.putString("release_date", release_date);
-                                args.putString("vote", vote);
-                                args.putString("plot", plot);
-                                args.putString("movie_id", movie_id);
-                                MovieDetailFragment detailFragment = new MovieDetailFragment();
-                                detailFragment.setArguments(args);
-                                getSupportFragmentManager().beginTransaction().replace(R.id.containerDetails, detailFragment).commit();
-                            }
-                            else {
-                            Intent intent = new Intent(getApplicationContext(), MovieDetail.class);
-                            intent.putExtra(TITLE, title);
-                            intent.putExtra(MOVIE_POSTER, poster);
-                            intent.putExtra(RELEASE_DATE, release_date);
-                            intent.putExtra(VOTE_AVERAGE, vote);
-                            intent.putExtra(PLOT_SYNOPSIS, plot);
-                            intent.putExtra(MOVIE_POSTER2,poster2);
-                            intent.putExtra(MOVIE_ID,movie_id);
-                            startActivity(intent);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Snackbar.make(view, "Error Code : " + e, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-
-                    }
-                });
+                display(imgUrl,movieDetails);
             } else {
                 Snackbar.make(findViewById(R.id.fragment), "Some Error Happened !", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -175,11 +218,11 @@ public class MainActivity extends AppCompatActivity {
             resultJSON = task.execute(status).get();
             if (resultJSON != null) {
                 JSONObject movie = new JSONObject(resultJSON);
-                movieDetails = movie.getJSONArray("results");
-                for (int i = 0; i < movieDetails.length(); i++) {
-                    JSONObject temp_mov_poster = movieDetails.getJSONObject(i);
-                    imgUrl[i] = "http://image.tmdb.org/t/p/w185/" + temp_mov_poster.getString("poster_path");
-                }
+                    movieDetails = movie.getJSONArray("results");
+                    for (int i = 0; i < movieDetails.length(); i++) {
+                        JSONObject temp_mov_poster = movieDetails.getJSONObject(i);
+                        imgUrl[i] = "http://image.tmdb.org/t/p/w185/" + temp_mov_poster.getString("poster_path");
+                    }
                 return true;
             } else
                 return false;

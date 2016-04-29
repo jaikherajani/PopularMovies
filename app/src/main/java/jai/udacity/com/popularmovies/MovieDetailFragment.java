@@ -40,11 +40,13 @@ public class MovieDetailFragment extends Fragment {
     public TextView plotView,voteAvg, releaseDate, Title, reviews;
     public ImageView imageView,imageView2,trailerview;
     public String title, release, poster,poster2, vote, plot,trailer,key;
+    private DBHelper databaseHelper;
     public static String id;
     public Toolbar myToolbar;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView;
         rootView = inflater.inflate(R.layout.movie_detail, container, false);
+        databaseHelper = new DBHelper(getContext());
         Title =(TextView)rootView.findViewById(R.id.name);
         plotView = (TextView) rootView.findViewById(R.id.synopsis);
         voteAvg = (TextView) rootView.findViewById(R.id.vote_average);
@@ -93,9 +95,17 @@ public class MovieDetailFragment extends Fragment {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Saved as Favorite", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite));
+                    boolean result = databaseHelper.insertData(id.toString());
+                    if(result) {
+                        Snackbar.make(view, "Saved as Favorite", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite));
+                    }
+                    else
+                    {
+                        Snackbar.make(view, "Something happended ! This movie might already be saved as favorite !", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
                 }
             });
             myToolbar = (Toolbar) rootView.findViewById(R.id.my_toolbar);

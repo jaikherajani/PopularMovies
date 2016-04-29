@@ -34,8 +34,10 @@ public class Fetchdata extends AsyncTask<String, Void, String> {
                 url = new URL("http://api.themoviedb.org/3/movie/"+movie_id+"/videos?&api_key=" + apiKey);
             else if (parameter=="reviews")
                 url = new URL("http://api.themoviedb.org/3/movie/"+movie_id+"/reviews?&api_key=" + apiKey);
-            else
+            else if(parameter=="popularity.desc" || parameter =="vote_count.desc")
             url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=" + parameter + "&api_key=" + apiKey);
+            else
+            url = new URL("http://api.themoviedb.org/3/movie/"+parameter+"?&api_key=" + apiKey);
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
