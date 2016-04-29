@@ -102,31 +102,38 @@ public class MainActivity extends AppCompatActivity {
             a=0;
             imgUrl1 = new String[cursor.getCount()];
             favmovies = new JSONArray();
-            if (cursor.moveToFirst()) {
-                do {
-                    b[a] = cursor.getString(0).toString();
-                    Log.i("Fav moviesid", b[a]);
-                    Fetchdata task4 = new Fetchdata();
-                    try {
-                        resultJSON = task4.execute(b[a]).get();
-                        movie = new JSONObject(resultJSON);
-                        imgUrl1[a]= "http://image.tmdb.org/t/p/w185/" +movie.getString("poster_path");
-                       favmovies.put(movie);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.i("Poster urls",imgUrl1[a]);
-                    Log.i("data inside json array",favmovies.toString());
-                    a++;
-                } while (cursor.moveToNext());
+            if(isNetworkAvailable()) {
+                display(imgUrl1, favmovies);
+                if (cursor.moveToFirst()) {
+                    do {
+                        b[a] = cursor.getString(0).toString();
+                        Log.i("Fav moviesid", b[a]);
+                        Fetchdata task4 = new Fetchdata();
+                        try {
+                            resultJSON = task4.execute(b[a]).get();
+                            movie = new JSONObject(resultJSON);
+                            imgUrl1[a] = "http://image.tmdb.org/t/p/w185/" + movie.getString("poster_path");
+                            favmovies.put(movie);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.i("Poster urls", imgUrl1[a]);
+                        Log.i("data inside json array", favmovies.toString());
+                        a++;
+                    } while (cursor.moveToNext());
+                }
+                Snackbar.make(findViewById(R.id.fragment), "Showing Favorites", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
-            Snackbar.make(findViewById(R.id.fragment), "Showing Favorites", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-            display(imgUrl1,favmovies);
+            else
+            {
+                Snackbar.make(findViewById(R.id.fragment), "No Internet Connectivity !",Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+            }
         }
             return super.onOptionsItemSelected(item);
         }
