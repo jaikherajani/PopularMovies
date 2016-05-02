@@ -82,8 +82,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:scaleType="centerCrop"
-                android:onClick="playtrailer"/>
+                android:scaleType="centerCrop"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +100,7 @@
             android:src="@android:drawable/ic_media_play"
             app:layout_anchor="@id/moviestills"
             app:layout_anchorGravity="center"
-            android:onClick="playtrailer"/>
+            android:id="@+id/trailer"/>
     </android.support.design.widget.CoordinatorLayout>
 
 </android.support.v4.widget.NestedScrollView>

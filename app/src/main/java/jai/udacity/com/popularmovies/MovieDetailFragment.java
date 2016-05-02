@@ -39,7 +39,8 @@ public class MovieDetailFragment extends Fragment {
     private String resultJSON = null;
     public TextView plotView,voteAvg, releaseDate, Title, reviews;
     public ImageView imageView,imageView2,trailerview;
-    public String title, release, poster,poster2, vote, plot,trailer,key;
+    public String title, release, poster,poster2, vote, plot,trailer;
+    public static String key;
     private DBHelper databaseHelper;
     public static String id;
     public Toolbar myToolbar;
@@ -135,6 +136,14 @@ public class MovieDetailFragment extends Fragment {
             }
             trailer="http://img.youtube.com/vi/"+key+"/hqdefault.jpg";
 
+            final FloatingActionButton viewtrailer = (FloatingActionButton) rootView.findViewById(R.id.trailer);
+            viewtrailer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.youtube.com/watch?v="+MovieDetailFragment.key));
+                    startActivity(intent1);
+                }
+            });
 
             Fetchdata task1 = new Fetchdata();
             reviews.setText("");
