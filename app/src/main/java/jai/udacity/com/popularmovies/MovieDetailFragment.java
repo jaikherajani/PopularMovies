@@ -109,10 +109,12 @@ public class MovieDetailFragment extends Fragment {
                     }
                 }
             });
-            myToolbar = (Toolbar) rootView.findViewById(R.id.my_toolbar);
-            ((AppCompatActivity)getActivity()).setSupportActionBar(myToolbar);
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+            if(!MainActivity.tablet) {
+                myToolbar = (Toolbar) rootView.findViewById(R.id.my_toolbar);
+                ((AppCompatActivity) getActivity()).setSupportActionBar(myToolbar);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+            }
             CollapsingToolbarLayout appbar = (CollapsingToolbarLayout) rootView.findViewById(R.id.toolbar_layout);
             appbar.setTitle(title);
             Fetchdata task = new Fetchdata();
