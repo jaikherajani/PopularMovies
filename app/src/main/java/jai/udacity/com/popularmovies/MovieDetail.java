@@ -42,7 +42,7 @@ public class MovieDetail extends AppCompatActivity {
     private String resultJSON = null;
     public TextView plotView,voteAvg, releaseDate, Title, reviews;
     public ImageView imageView,imageView2,trailerview;
-    public String title, release, poster,poster2, vote, plot,trailer,key;
+    public String title, release, poster,poster2, vote, plot,trailer,key,fav;
     public String id;
     public Toolbar myToolbar;
 
@@ -57,6 +57,7 @@ public class MovieDetail extends AppCompatActivity {
         poster2 = intent.getStringExtra(MOVIE_POSTER2);
         vote = intent.getStringExtra(VOTE_AVERAGE);
         plot = intent.getStringExtra(PLOT_SYNOPSIS);
+        fav= intent.getStringExtra("fav");
         poster = "http://image.tmdb.org/t/p/w185/" + poster;
         poster2 = "http://image.tmdb.org/t/p/w780/" + poster2;
         id=intent.getStringExtra(MOVIE_ID);
@@ -68,6 +69,7 @@ public class MovieDetail extends AppCompatActivity {
         args.putString("vote", vote);
         args.putString("plot", plot);
         args.putString("movie_id",id);
+        args.putString("fav",fav);
         MovieDetailFragment detailFragment = new MovieDetailFragment();
         detailFragment.setArguments(args);
         setContentView(layout.activity_movie_detail);

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ public class MovieDetailFragment extends Fragment {
     private String resultJSON = null;
     public TextView plotView,voteAvg, releaseDate, Title, reviews;
     public ImageView imageView,imageView2,trailerview;
-    public String title, release, poster,poster2, vote, plot,trailer;
+    public String title, release, poster,poster2, vote, plot,trailer,fav;
     public static String key;
     private DBHelper databaseHelper;
     public static String id;
@@ -65,6 +66,8 @@ public class MovieDetailFragment extends Fragment {
             vote = getArguments().getString("vote");
             id = getArguments().getString("movie_id");
             plot = getArguments().getString("plot");
+            fav = getArguments().getString("fav");
+            Log.i("isfavorite","is favorite = "+fav);
             Title.setText(title);
             plotView.setText(plot);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -93,6 +96,10 @@ public class MovieDetailFragment extends Fragment {
                 }
             });
             final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+            if(fav.equals("YES"))
+                fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite));
+            else
+                fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_border));
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -39,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
     private GridView gridView;
     private String resultJSON = null;
     private String[] imgUrl = new String[20];
+    public String[] b = new String[20];
     private String[] imgUrl1;
     String status="popularity.desc";
-    int a = 0;
+    int a = 0,index;
     public static boolean tablet=false;
+    public boolean isfavorite=false;
     private DBHelper databaseHelper;
     private JSONArray movieDetails;
     private JSONArray favmovies;
@@ -75,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the user's current game state
         savedInstanceState.putString("STATUS",status);
+        index = gridView.getFirstVisiblePosition();
+        savedInstanceState.putInt("INDEX",index);
+        Log.i("INDEX POSITION","INDEX POSITION SENT = "+index);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -84,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore state members from saved instance
         status = savedInstanceState.getString("STATUS");
+        index = savedInstanceState.getInt("INDEX");
+        Log.i("INDEX POSITION","INDEX POSITION RECIEVED = "+index);
         if(status!="favorite")
         {
             sort();
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         {
             showfav();
         }
+        gridView.setSelection(index);
     }
 
     @Override
@@ -128,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
     private void showfav()
     {
         Cursor cursor = databaseHelper.getData();
-        String[] b = new String[20];
         a=0;
         imgUrl1 = new String[cursor.getCount()];
         favmovies = new JSONArray();
@@ -172,6 +179,28 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+    private boolean isFavorite(String id)
+    {
+        Cursor cursor = databaseHelper.getData();
+        a=0;
+            if (cursor.moveToFirst()) {
+                do {
+                    b[a] = cursor.getString(0).toString();
+                    a++;
+                } while (cursor.moveToNext());
+            }
+        for (int e=0;e<a;e++)
+        {
+            Log.i("Checking favorite","Favorite id comparisons "+id+"=="+b[e]);
+            if(id.equals(b[e])) {
+                isfavorite = true;
+                break;
+            }
+            else
+                isfavorite=false;
+        }
+        return isfavorite;
+    }
 
     public void display(String url[], final JSONArray object)
     {
@@ -192,6 +221,15 @@ public class MainActivity extends AppCompatActivity {
                     String plot = object1.getString(PLOT_SYNOPSIS);
                     String poster2 = object1.getString(MOVIE_POSTER2);
                     String movie_id = object1.getString(MOVIE_ID);
+                    String fav;
+                    if (isFavorite(movie_id))
+                    {
+                        fav="YES";
+                    }
+                    else
+                    {
+                        fav="NO";
+                    }
                     if(tablet) {
                         Bundle args = new Bundle();
                         args.putString("Title", title);
@@ -201,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
                         args.putString("vote", vote);
                         args.putString("plot", plot);
                         args.putString("movie_id", movie_id);
+                        args.putString("fav",fav);
                         MovieDetailFragment detailFragment = new MovieDetailFragment();
                         detailFragment.setArguments(args);
                         getSupportFragmentManager().beginTransaction().replace(R.id.containerDetails, detailFragment).commit();
@@ -214,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra(PLOT_SYNOPSIS, plot);
                         intent.putExtra(MOVIE_POSTER2,poster2);
                         intent.putExtra(MOVIE_ID,movie_id);
+                        intent.putExtra("fav",fav);
                         startActivity(intent);
                     }
 
